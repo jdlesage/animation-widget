@@ -10,3 +10,5 @@ animationwidget/static/
 
 # OS X
 .DS_Store
+
+*.swp

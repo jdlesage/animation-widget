@@ -8,31 +8,56 @@ var _ = require('underscore');
 //
 // When serialiazing entire widget state for embedding, only values different from the
 // defaults will be specified.
-var HelloModel = widgets.DOMWidgetModel.extend({
-    defaults: _.extend({}, widgets.DOMWidgetModel.prototype.defaults, {
-        _model_name : 'HelloModel',
-        _view_name : 'HelloView',
-        _model_module : 'animation-widget',
-        _view_module : 'animation-widget',
-        value : 'Hello World'
-    })
+var AnimationModel = widgets.DOMWidgetModel.extend({
+	defaults: _.extend({}, widgets.DOMWidgetModel.prototype.defaults, {
+		_model_name : 'AnimationModel',
+		_view_name : 'AnimationView',
+		_model_module : 'animation-widget',
+		_view_module : 'animation-widget',
+		value : 0.0,
+		run: false
+	})
 });
 
 
 // Custom View. Renders the widget model.
-var HelloView = widgets.DOMWidgetView.extend({
-    render: function() {
-        this.value_changed();
-        this.model.on('change:value', this.value_changed, this);
-    },
+var AnimationView = widgets.DOMWidgetView.extend({
 
-    value_changed: function() {
-        this.el.textContent = this.model.get('value');
-    }
+	// Render the view.
+	render: function() { 
+		this.value_changed();
+		this.model.on('change:value', this.value_changed, this);
+		this.model.on('change:run', this.set_trigger, this);
+		this.timerId = 0;
+	},
+
+	value_changed: function() {
+		this.$el.text(this.model.get('value')); 
+	},
+
+	set_trigger: function()
+	{
+		if(this.timerId)
+		{
+			clearInterval(this.timerId);
+			this.timerId = 0;
+		}
+
+		if(this.model.get('run'))
+		{
+			this.timerId = setInterval(function(widget){
+				var value = widget.model.get('value');
+				value = value + 0.1;
+				widget.model.set('value', value);
+				widget.touch();
+				widget.value_changed();
+			}, 100, this);
+		}
+	}
 });
 
 
 module.exports = {
-    HelloModel : HelloModel,
-    HelloView : HelloView
+	AnimationModel : AnimationModel,
+	AnimationView : AnimationView
 };
