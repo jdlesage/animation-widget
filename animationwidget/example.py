@@ -23,6 +23,11 @@ class AnimationWidget(widgets.DOMWidget):
     _model_name = traitlets.Unicode('AnimationModel').tag(sync=True)
     _view_module = traitlets.Unicode('animation-widget').tag(sync=True)
     _model_module = traitlets.Unicode('animation-widget').tag(sync=True)
+    # Signal value
     value = traitlets.CFloat(0.0).tag(sync=True)
+    # Boolean timer is active
     run = traitlets.CBool(False).tag(sync=True)
-
+    # Signal period (in ms)
+    period = traitlets.CFloat(5000).tag(sync=True)
+    # Sampling rate (in ms)
+    sampling = traitlets.CFloat(100).tag(sync=True)

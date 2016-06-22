@@ -15,7 +15,9 @@ var AnimationModel = widgets.DOMWidgetModel.extend({
 		_model_module : 'animation-widget',
 		_view_module : 'animation-widget',
 		value : 0.0,
-		run: false
+		run: false,
+		period: 5000.0,
+		sampling: 100.0
 	})
 });
 
@@ -35,25 +37,51 @@ var AnimationView = widgets.DOMWidgetView.extend({
 		this.$el.text(this.model.get('value')); 
 	},
 
-	set_trigger: function()
-	{
-		if(this.timerId)
-		{
-			clearInterval(this.timerId);
-			this.timerId = 0;
-		}
-
-		if(this.model.get('run'))
-		{
-			this.timerId = setInterval(function(widget){
-				var value = widget.model.get('value');
-				value = value + 0.1;
-				widget.model.set('value', value);
-				widget.touch();
-				widget.value_changed();
-			}, 100, this);
-		}
-	}
+	increment_val: function(widget)
+        {
+            var period = widget.model.get('period')
+            var sampling = widget.model.get('sampling')
+            
+            var delta = sampling/period;
+            var value = widget.model.get('value');
+            value = Math.min(value + delta, 1.0)
+            widget.model.set('value', value);
+            widget.touch();
+            widget.value_changed();
+            // Relaunch timer
+            if (value < 1.0)
+            {
+                widget.timerId = setTimeout(widget.increment_val, sampling, widget);
+            }
+            else    
+            { 
+                widget.timerId = 0;
+                widget.model.set('run', false);
+                widget.touch();
+            }
+        },
+        
+        set_trigger: function()
+        {
+            if(this.timerId)
+            {
+                clearTimeout(this.timerId);
+                this.timerId = 0;
+            }
+            
+            if(this.model.get('run'))
+            {
+                var period = this.model.get('period')
+                var sampling = this.model.get('sampling')
+                if (this.model.get('value') >= 1.0)
+                {
+                    this.model.set('value', 0.0);
+                    this.value_changed();
+                    this.touch();
+                }
+               this.timerId = setTimeout(this.increment_val, sampling, this);
+            }
+        },
 });
 
 
