@@ -29,5 +29,5 @@ class AnimationWidget(widgets.DOMWidget):
     run = traitlets.CBool(False).tag(sync=True)
     # Signal period (in ms)
     period = traitlets.CFloat(5000).tag(sync=True)
-    # Sampling rate (in ms)
-    sampling = traitlets.CFloat(100).tag(sync=True)
+    # Number of samples in period
+    nbsamples = traitlets.CInt(100).tag(sync=True)

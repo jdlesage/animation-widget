@@ -17,7 +17,7 @@ var AnimationModel = widgets.DOMWidgetModel.extend({
 		value : 0.0,
 		run: false,
 		period: 5000.0,
-		sampling: 100.0
+		nbsamples: 100
 	})
 });
 
@@ -40,9 +40,9 @@ var AnimationView = widgets.DOMWidgetView.extend({
 	increment_val: function(widget)
         {
             var period = widget.model.get('period')
-            var sampling = widget.model.get('sampling')
+            var nbsamples = widget.model.get('nbsamples')
             
-            var delta = sampling/period;
+            var delta = 1.0/nbsamples;
             var value = widget.model.get('value');
             value = Math.min(value + delta, 1.0)
             widget.model.set('value', value);
@@ -51,7 +51,7 @@ var AnimationView = widgets.DOMWidgetView.extend({
             // Relaunch timer
             if (value < 1.0)
             {
-                widget.timerId = setTimeout(widget.increment_val, sampling, widget);
+                widget.timerId = setTimeout(widget.increment_val, period/nbsamples, widget);
             }
             else    
             { 
@@ -72,14 +72,14 @@ var AnimationView = widgets.DOMWidgetView.extend({
             if(this.model.get('run'))
             {
                 var period = this.model.get('period')
-                var sampling = this.model.get('sampling')
+                var nbsamples = this.model.get('nbsamples')
                 if (this.model.get('value') >= 1.0)
                 {
                     this.model.set('value', 0.0);
                     this.value_changed();
                     this.touch();
                 }
-               this.timerId = setTimeout(this.increment_val, sampling, this);
+               this.timerId = setTimeout(this.increment_val, period/nbsamples, this);
             }
         },
 });
