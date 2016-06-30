@@ -31,6 +31,7 @@ var AnimationView = widgets.DOMWidgetView.extend({
 		this.model.on('change:value', this.value_changed, this);
 		this.model.on('change:run', this.set_trigger, this);
 		this.timerId = 0;
+		this.last_update_date = 0;
 	},
 
 	value_changed: function() {
@@ -42,11 +43,16 @@ var AnimationView = widgets.DOMWidgetView.extend({
             var period = widget.model.get('period')
             var nbsamples = widget.model.get('nbsamples')
             
-            var delta = 1.0/nbsamples;
+	    var d = new Date();
+	    var new_date = d.getTime()
+	    // Compute the delta in regard to the date
+            var delta = (new_date - widget.last_update_date) / period
             var value = widget.model.get('value');
             value = Math.min(value + delta, 1.0)
             widget.model.set('value', value);
             widget.touch();
+	    // Set the new date
+	    widget.last_update_date = new_date;
             widget.value_changed();
             // Relaunch timer
             if (value < 1.0)
@@ -80,6 +86,8 @@ var AnimationView = widgets.DOMWidgetView.extend({
                     this.touch();
                 }
                this.timerId = setTimeout(this.increment_val, period/nbsamples, this);
+	       var d = new Date();
+	       this.last_update_date = d.getTime();
             }
         },
 });
