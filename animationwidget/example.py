@@ -31,3 +31,5 @@ class AnimationWidget(widgets.DOMWidget):
     period = traitlets.CFloat(5000).tag(sync=True)
     # Number of samples in period
     nbsamples = traitlets.CInt(100).tag(sync=True)
+    # Loop
+    loop = traitlets.CBool(False).tag(sync=True)

@@ -17,7 +17,8 @@ var AnimationModel = widgets.DOMWidgetModel.extend({
 		value : 0.0,
 		run: false,
 		period: 5000.0,
-		nbsamples: 100
+		nbsamples: 100,
+		loop: false
 	})
 });
 
@@ -48,19 +49,31 @@ var AnimationView = widgets.DOMWidgetView.extend({
 	    // Compute the delta in regard to the date
             var delta = (new_date - widget.last_update_date) / period
             var value = widget.model.get('value');
-            value = Math.min(value + delta, 1.0)
-            widget.model.set('value', value);
+            value = value + delta;
             widget.touch();
 	    // Set the new date
 	    widget.last_update_date = new_date;
             widget.value_changed();
+            if(widget.model.get('loop'))
+	    {
+		// Loop value
+		while(value >= 1.0)
+		{
+			value = value - 1.0;
+		}
+	    }
+	    else
+	    {
+ 		value = Math.min(value, 1.0);
+	    }
+            widget.model.set('value', value);
             // Relaunch timer
             if (value < 1.0)
             {
                 widget.timerId = setTimeout(widget.increment_val, period/nbsamples, widget);
             }
             else    
-            { 
+            {
                 widget.timerId = 0;
                 widget.model.set('run', false);
                 widget.touch();
