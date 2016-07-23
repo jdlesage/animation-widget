@@ -7,7 +7,7 @@
 // Export everything from example.js and the npm package version number.
 // Export everything from example and the npm package version number.
 var loadedModules = [
-    require('./example'),
+    require('./widget_timer'),
     require('./widget_image'),
 ];
 

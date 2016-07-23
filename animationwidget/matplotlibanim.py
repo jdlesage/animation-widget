@@ -5,7 +5,7 @@ from ipywidgets import ToggleButton
 from traitlets import link
 
 from . import widget_image
-from .example import AnimationWidget
+from .widget_timer import AnimationWidget
 
 
 class AnimationViewer(object):
